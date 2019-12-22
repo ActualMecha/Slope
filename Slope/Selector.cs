@@ -35,6 +35,7 @@ namespace Slope
             var options = new PromptEntityOptions(prompt);
             options.AddAllowedClass(typeof(Polyline), false);
             options.AddAllowedClass(typeof(Line), false);
+            options.AddAllowedClass(typeof(Arc), false);
             var result = Editor.GetEntity(options);
             if (result.Status != PromptStatus.OK)
                 return null;

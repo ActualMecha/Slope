@@ -9,10 +9,10 @@ namespace Slope.Model
     public class SimpleUniversalLine : UniversalLine
     {
         private readonly Curve ncadLine;
-        private List<UniversalLineSegment> segments;
+        private List<UniversalCurveSegment> segments;
         private bool reversed;
 
-        public override IReadOnlyCollection<UniversalLineSegment> Segments => segments.AsReadOnly();
+        public override IReadOnlyCollection<UniversalCurveSegment> Segments => segments.AsReadOnly();
         public override Point3d StartPoint => Segments.First().StartPoint;
         public override Point3d EndPoint => Segments.Last().EndPoint;
         public override bool VisuallyClosed { get; }
@@ -28,11 +28,19 @@ namespace Slope.Model
                     break;
 
                 case Line line:
-                    segments = new List<UniversalLineSegment>
+                    segments = new List<UniversalCurveSegment>
                     {
                         new UniversalLineSegment(new LineSegment3d(line.StartPoint, line.EndPoint), this)
                     };
                     VisuallyClosed = false;
+                    break;
+
+                case Arc arc:
+                    segments = new List<UniversalCurveSegment>
+                    {
+                        new UniversalArcSegment(arc, this)
+                    };
+                    VisuallyClosed = arc.Closed || StartPoint == EndPoint;
                     break;
 
                 default:
@@ -70,10 +78,10 @@ namespace Slope.Model
             ncadLine.Dispose();
         }
 
-        private List<UniversalLineSegment> ExtractSegments(Polyline line) =>
+        private List<UniversalCurveSegment> ExtractSegments(Polyline line) =>
             Enumerable.Range(0, line.NumberOfVertices - (line.Closed ? 0 : 1))
             .Select(i => line.GetLineSegmentAt(i))
-            .Select(segment => new UniversalLineSegment(segment, this))
+            .Select(segment => (UniversalCurveSegment) new UniversalLineSegment(segment, this))
             .ToList();
 
         public override Vector3d GetFirstDerivative(PointOnLine pointOnLine) =>

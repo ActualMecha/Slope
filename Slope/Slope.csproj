@@ -70,7 +70,7 @@
   <ItemGroup>
     <Compile Include="Extensions.cs" />
     <Compile Include="Model\UniversalLine.cs" />
-    <Compile Include="Model\LineSegment.cs" />
+    <Compile Include="Model\UniversalLineSegment.cs" />
     <Compile Include="Model\PointOnLine.cs" />
     <Compile Include="Model\PolyUniversalLine.cs" />
     <Compile Include="Model\Side.cs" />

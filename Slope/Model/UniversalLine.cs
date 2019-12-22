@@ -11,7 +11,7 @@ namespace Slope.Model
         public abstract Point3d StartPoint { get; }
         public abstract Point3d EndPoint { get; }
         public abstract bool VisuallyClosed { get; }
-        public abstract IReadOnlyCollection<UniversalLineSegment> Segments { get; }
+        public abstract IReadOnlyCollection<UniversalCurveSegment> Segments { get; }
 
         public abstract void Hightlight();
         public abstract void Unhighlight();
@@ -45,6 +45,7 @@ namespace Slope.Model
                 return first.HasValue;
             }
         }
+
         public Side GetSide(UniversalLine otherLine)
         {
             if (VisuallyClosed || otherLine.VisuallyClosed)
@@ -115,13 +116,11 @@ namespace Slope.Model
                 : otherLine.Segments.Last();
 
             if (thisSegment.StartPoint == otherSegment.StartPoint)
-                return thisSegment.StartPoint.GetVectorTo(thisSegment.EndPoint).GetSide(
-                    otherSegment.StartPoint.GetVectorTo(otherSegment.EndPoint));
+                return thisSegment.GetFirstDerivative(0).GetSide(otherSegment.GetFirstDerivative(0));
             else if (thisSegment.StartPoint == otherSegment.EndPoint)
-                return thisSegment.StartPoint.GetVectorTo(thisSegment.EndPoint).GetSide(
-                    otherSegment.EndPoint.GetVectorTo(otherSegment.StartPoint));
+                return thisSegment.GetFirstDerivative(0).GetSide(otherSegment.GetFirstDerivative(1));
 
-            var tangent = thisSegment.StartPoint.GetVectorTo(thisSegment.EndPoint);
+            var tangent = thisSegment.GetFirstDerivative(thisSegment.EvaluatePoint(0));
             var normal = new Vector3d(tangent.Y, -tangent.X, 0);
             using (var normalLine = new Line(thisSegment.StartPoint, thisSegment.StartPoint + normal))
             using (var otherLineSegment = new Line(otherSegment.StartPoint, otherSegment.EndPoint))

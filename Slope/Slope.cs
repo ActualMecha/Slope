@@ -26,8 +26,6 @@ namespace Slope
                 using (var selector = new Selector(editor, transactionManager))
                 {
                     selector.SelectLines();
-                    selector.Top.ChopIntersections();
-                    selector.Bottom.ChopIntersections();
                     using (var blockTable = (BlockTable)transaction.GetObject(database.BlockTableId, OpenMode.ForRead, false))
                     using (var currentLayout = (BlockTableRecord)transaction.GetObject(database.CurrentSpaceId, OpenMode.ForWrite, false))
                     {

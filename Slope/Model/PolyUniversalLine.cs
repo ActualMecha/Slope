@@ -42,25 +42,6 @@ namespace Slope.Model
             return true;
         }
 
-        public void ChopIntersections()
-        {
-            foreach (var pair in Lines.Zip(Lines.Skip(1),
-                                           (prev, next) => new
-                                           {
-                                               prev = prev.Segments.Last(),
-                                               next = next.Segments.First()
-                                           }))
-            {
-                var intersection = pair.prev.IntersectWith(pair.next, Intersect.OnBothOperands);
-                if (intersection.Count == 1)
-                {
-                    var point = intersection[0];
-                    pair.prev.SetEndPoint(point);
-                    pair.next.SetStartPoint(point);
-                }
-            }
-        }
-
         #endregion
 
         #region IUniversalLine
@@ -68,7 +49,7 @@ namespace Slope.Model
         public override Point3d StartPoint => Lines.First().StartPoint;
         public override Point3d EndPoint => Lines.Last().EndPoint;
         public override bool VisuallyClosed => Lines.Count == 1 && Lines.First().VisuallyClosed || StartPoint == EndPoint;
-        public override IReadOnlyCollection<UniversalLineSegment> Segments =>
+        public override IReadOnlyCollection<UniversalCurveSegment> Segments =>
             Lines.SelectMany(line => line.Segments).ToList().AsReadOnly();
         public override void Reverse()
         {
